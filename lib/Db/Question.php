@@ -7,6 +7,7 @@ declare(strict_types=1);
  *
  * @author affan98 <affan98@gmail.com>
  * @author Jan-Christoph Borchardt <hey@jancborchardt.net>
+ * @author Jan Petersen <dev.jdpdo@outlook.de>
  * @author John Molakvoæ (skjnldsv) <skjnldsv@protonmail.com>
  * @author Jonas Rittershofer <jotoeri@users.noreply.github.com>
  * @author Roeland Jago Douma <roeland@famdouma.nl>
@@ -40,8 +41,12 @@ use OCP\AppFramework\Db\Entity;
  * @method void setOrder(integer $value)
  * @method string getType()
  * @method void setType(string $value)
+ * @method bool getIsRequired()
+ * @method void setIsRequired(bool $value)
  * @method string getText()
  * @method void setText(string $value)
+ * @method integer getPrerequisiteId()
+ * @method void setPrerequisiteId(integer $value)
  */
 class Question extends Entity {
 	protected $formId;
@@ -49,6 +54,7 @@ class Question extends Entity {
 	protected $type;
 	protected $isRequired;
 	protected $text;
+	protected $prerequisiteId;
 
 	public const TYPES = [
 		'short',
@@ -66,12 +72,14 @@ class Question extends Entity {
 		$this->addType('type', 'string');
 		$this->addType('isRequired', 'bool');
 		$this->addType('text', 'string');
+		$this->addType('prerequisiteId', 'integer');
 	}
 
 	public function read(): array {
 		return [
 			'id' => $this->getId(),
 			'formId' => $this->getFormId(),
+			'prerequisiteId' => $this->getPrerequisiteId(),
 			'order' => $this->getOrder(),
 			'type' => htmlspecialchars_decode($this->getType()),
 			'isRequired' => $this->getIsRequired(),

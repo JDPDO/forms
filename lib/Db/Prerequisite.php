@@ -3,10 +3,7 @@
 declare(strict_types=1);
 
 /**
- * @copyright Copyright (c) 2019 Inigo Jiron <ijiron@terpmail.umd.edu>
- *
- * @author Jan Petersen <dev.jdpdo@outlook.de>
- * @author Jonas Rittershofer <jotoeri@users.noreply.github.com>
+ * @copyright Copyright (c) 2021 Jan Petersen <dev.jdpdo@outlook.de>
  *
  * @license GNU AGPL version 3 or any later version
  *
@@ -35,30 +32,62 @@ use OCP\AppFramework\Db\Entity;
  * @method string getText()
  * @method void setText(string $value)
  */
-class Option extends Entity {
+class Prerequisite extends Entity {
+    
+	/** @var string */
+	protected $condition;
+
+	public const CONDITION_TYPES = [
+		'populated',
+		'equals',
+		'greater',
+		'less',
+	];
+
+	/** @var bool */
+	protected $isNot;
+
+	/** 
+	 * Condition of link to next (optional) prequisite.
+	 * 
+	 * @var string 
+	 */
+	protected $linkCondition;
+
+	/** 
+	 * Link next (optional) prequisite.
+	 * 
+	 * @var integer
+	 */
+	protected $linkedPrequsiteId;
+
+	public const LINK_CONDITION_TYPES = [
+		'and',
+		'or',
+	];
 
 	/** @var integer */
-	protected $prerequisiteId;
-	/** @var integer */
-	protected $questionId;
-	/** @var string */
-	protected $text;
+	protected $optionId;
 
 	/**
-	 * Option constructor.
+	 * Prerequisite constructor.
 	 */
 	public function __construct() {
-		$this->addType('prerequisiteId', 'integer');
-		$this->addType('questionId', 'integer');
-		$this->addType('text', 'string');
+		$this->addType('condition', 'string');
+		$this->addType('isNot', 'bool');
+		$this->addType('linkCondition', 'integer');
+		$this->addType('linkedPrequsiteId', 'bool');
+		$this->addType('optionId', 'integer');
 	}
 
 	public function read(): array {
 		return [
 			'id' => $this->getId(),
-			'prerequisiteId' => $this->getPrerequisiteId(),
-			'questionId' => $this->getQuestionId(),
-			'text' => htmlspecialchars_decode($this->getText()),
+			'optionId' => $this->getQuestionId(),
+			'condition' => $this->getCondition(),
+			'isNot' => $this->getIsNot(),
+			'linkCondition' => $this->getLinkCondition(),
+			'optionId' => $this->getOptionId(),
 		];
 	}
 }
