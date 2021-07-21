@@ -1,0 +1,23 @@
+version: "3.9"
+
+services: 
+    nextcloud:
+        build: 
+            context: .
+            dockerfile: Dockerfile.nextcloud
+        container_name: nextcloud-dev-advanced-forms
+        environment: 
+            - SQLITE_DATABASE=nextcloud-dev
+            - NEXTCLOUD_ADMIN_USER=admin
+            - NEXTCLOUD_ADMIN_PASSWORD=admin
+            - SMTP_HOST=smtp.ionos.de
+            - SMTP_SECURE=ssl
+        ports: 
+            - "8081:80"
+        restart: always
+            
+secrets: 
+    smtp_name: 
+        file: ./secrets/smtp_name
+    smtp_password: 
+        file: ./secrets/smtp_password

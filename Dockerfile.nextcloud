@@ -1,0 +1,5 @@
+# syntax=docker/dockerfile:1.2
+
+FROM nextcloud:21
+
+COPY --chown=www-data:www-data . /var/www/html/custom_apps/advanced-forms
