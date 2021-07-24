@@ -53,11 +53,14 @@ class Prerequisite extends Entity {
 	 */
 	protected $conditionOptionId;
 
+	/**
+	 * Types for conditions.
+	 */
 	public const CONDITION_TYPES = [
-		'populated',
-		'equals',
-		'greater',
-		'less',
+		1 => 'populated',
+		2 => 'equals',
+		4 => 'greater',
+		8 => 'less',
 	];
 
 	/** @var bool */
