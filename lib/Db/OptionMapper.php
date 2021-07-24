@@ -5,6 +5,7 @@ declare(strict_types=1);
 /**
  * @copyright Copyright (c) 2019 Inigo Jiron <ijiron@terpmail.umd.edu>
  *
+ * @author Jan Petersen
  * @author John Molakvoæ (skjnldsv) <skjnldsv@protonmail.com>
  * @author Jonas Rittershofer <jotoeri@users.noreply.github.com>
  *
@@ -33,12 +34,16 @@ use OCP\IDBConnection;
 
 class OptionMapper extends QBMapper {
 
+	private $prerequisiteMapper;
+
 	/**
 	 * OptionMapper constructor.
 	 * @param IDBConnection $db
 	 */
-	public function __construct(IDBConnection $db) {
+	public function __construct(IDBConnection $db, PrerequisiteMapper $prerequisiteMapper) {
 		parent::__construct($db, 'forms_v2_options', Option::class);
+
+		$this->$prerequisiteMapper = $prerequisiteMapper;
 	}
 
 	/**
@@ -61,6 +66,9 @@ class OptionMapper extends QBMapper {
 
 	public function deleteByQuestion(int $questionId): void {
 		$qb = $this->db->getQueryBuilder();
+
+		// Delete Prerequisites
+		$this->prerequisiteMapper->deleteByOption();
 
 		$qb->delete($this->getTableName())
 			->where(
