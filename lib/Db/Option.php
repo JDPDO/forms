@@ -5,7 +5,6 @@ declare(strict_types=1);
 /**
  * @copyright Copyright (c) 2019 Inigo Jiron <ijiron@terpmail.umd.edu>
  *
- * @author Jan Petersen <dev.jdpdo@outlook.de>
  * @author Jonas Rittershofer <jotoeri@users.noreply.github.com>
  *
  * @license GNU AGPL version 3 or any later version
@@ -37,9 +36,7 @@ use OCP\AppFramework\Db\Entity;
  */
 class Option extends Entity {
 
-	/** @var integer */
-	protected $prerequisiteId;
-	/** @var integer */
+	/** @var int */
 	protected $questionId;
 	/** @var string */
 	protected $text;
@@ -48,7 +45,6 @@ class Option extends Entity {
 	 * Option constructor.
 	 */
 	public function __construct() {
-		$this->addType('prerequisiteId', 'integer');
 		$this->addType('questionId', 'integer');
 		$this->addType('text', 'string');
 	}
@@ -56,7 +52,6 @@ class Option extends Entity {
 	public function read(): array {
 		return [
 			'id' => $this->getId(),
-			'prerequisiteId' => $this->getPrerequisiteId(),
 			'questionId' => $this->getQuestionId(),
 			'text' => htmlspecialchars_decode($this->getText()),
 		];
