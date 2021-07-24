@@ -5,6 +5,8 @@ declare(strict_types=1);
 /**
  * @copyright Copyright (c) 2021 Jan Petersen <dev.jdpdo@outlook.de>
  *
+ * @author Jan Petersen <dev.jdpdo@outlook.de>
+ *
  * @license GNU AGPL version 3 or any later version
  *
  * This program is free software: you can redistribute it and/or modify
@@ -25,17 +27,31 @@ declare(strict_types=1);
 namespace OCA\Forms\Db;
 
 use OCP\AppFramework\Db\Entity;
+use OCP\DB\Types;
 
 /**
- * @method integer getQuestionId()
- * @method void setQuestionId(integer $value)
- * @method string getText()
- * @method void setText(string $value)
+ * Base type for conditional forms.
+ *
+ * @method string	getCondition()
+ * @method integer	getConditionOptionId()
+ * @method bool		getIsNot()
+ * @method integer	getOptionId()
  */
 class Prerequisite extends Entity {
-    
-	/** @var string */
+	
+	/**
+	 * Condition of prequisite.
+	 *
+	 * @var string
+	 */
 	protected $condition;
+
+	/**
+	 * Option on which *condition* is applied.
+	 *
+	 * @var integer
+	 */
+	protected $conditionOptionId;
 
 	public const CONDITION_TYPES = [
 		'populated',
@@ -47,46 +63,29 @@ class Prerequisite extends Entity {
 	/** @var bool */
 	protected $isNot;
 
-	/** 
-	 * Condition of link to next (optional) prequisite.
-	 * 
-	 * @var string 
-	 */
-	protected $linkCondition;
-
-	/** 
-	 * Link next (optional) prequisite.
-	 * 
+	/**
+	 * Affected option.
+	 *
 	 * @var integer
 	 */
-	protected $linkedPrequsiteId;
-
-	public const LINK_CONDITION_TYPES = [
-		'and',
-		'or',
-	];
-
-	/** @var integer */
 	protected $optionId;
 
 	/**
 	 * Prerequisite constructor.
 	 */
 	public function __construct() {
-		$this->addType('condition', 'string');
-		$this->addType('isNot', 'bool');
-		$this->addType('linkCondition', 'integer');
-		$this->addType('linkedPrequsiteId', 'bool');
-		$this->addType('optionId', 'integer');
+		$this->addType('condition', Types::STRING);
+		$this->addType('conditionOptionId', Types::INTEGER);
+		$this->addType('isNot', Types::BOOLEAN);
+		$this->addType('optionId', Types::INTEGER);
 	}
 
 	public function read(): array {
 		return [
 			'id' => $this->getId(),
-			'optionId' => $this->getQuestionId(),
 			'condition' => $this->getCondition(),
+			'conditionOptionId' => $this->getConditionOptionId(),
 			'isNot' => $this->getIsNot(),
-			'linkCondition' => $this->getLinkCondition(),
 			'optionId' => $this->getOptionId(),
 		];
 	}
