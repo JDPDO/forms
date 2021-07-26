@@ -3,6 +3,7 @@
  * @copyright Copyright (c] 2017 Vinzenz Rosenkranz <vinzenz.rosenkranz@gmail.com>
  *
  * @author affan98 <affan98@gmail.com>
+ * @author Jan Petersen <dev.jdpdo@outlook.de>
  * @author John Molakvoæ (skjnldsv) <skjnldsv@protonmail.com>
  * @author Jonas Rittershofer <jotoeri@users.noreply.github.com>
  *
@@ -158,6 +159,32 @@ return [
 		[
 			'name' => 'api#deleteOption',
 			'url' => '/api/{apiVersion}/option/{id}',
+			'verb' => 'DELETE',
+			'requirements' => [
+				'apiVersion' => 'v1(\.1)?'
+			]
+		],
+
+		// Prerequisites
+		[
+			'name' => 'api#newPrerequisite',
+			'url' => '/api/{apiVersion}/prerequisite',
+			'verb' => 'POST',
+			'requirements' => [
+				'apiVersion' => 'v1(\.1)?'
+			]
+		],
+		[
+			'name' => 'api#updatePrerequisite',
+			'url' => '/api/{apiVersion}/prerequisite/update',
+			'verb' => 'POST',
+			'requirements' => [
+				'apiVersion' => 'v1(\.1)?'
+			]
+		],
+		[
+			'name' => 'api#deletePrerequisite',
+			'url' => '/api/{apiVersion}/prerequisite/{id}',
 			'verb' => 'DELETE',
 			'requirements' => [
 				'apiVersion' => 'v1(\.1)?'
