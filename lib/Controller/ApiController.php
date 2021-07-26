@@ -37,6 +37,8 @@ use OCA\Forms\Db\Form;
 use OCA\Forms\Db\FormMapper;
 use OCA\Forms\Db\Option;
 use OCA\Forms\Db\OptionMapper;
+use OCA\Forms\Db\Prerequisite;
+use OCA\Forms\Db\PrerequisiteMapper;
 use OCA\Forms\Db\Question;
 use OCA\Forms\Db\QuestionMapper;
 use OCA\Forms\Db\Submission;
@@ -76,6 +78,9 @@ class ApiController extends OCSController {
 	/** @var OptionMapper */
 	private $optionMapper;
 
+	/** @var PrerequisiteMapper */
+	private $prerequisiteMapper;
+
 	/** @var QuestionMapper */
 	private $questionMapper;
 
@@ -108,6 +113,7 @@ class ApiController extends OCSController {
 								AnswerMapper $answerMapper,
 								FormMapper $formMapper,
 								OptionMapper $optionMapper,
+								PrerequisiteMapper $prerequisiteMapper,
 								QuestionMapper $questionMapper,
 								SubmissionMapper $submissionMapper,
 								FormsService $formsService,
@@ -124,6 +130,7 @@ class ApiController extends OCSController {
 		$this->answerMapper = $answerMapper;
 		$this->formMapper = $formMapper;
 		$this->optionMapper = $optionMapper;
+		$this->prerequisiteMapper = $prerequisiteMapper;
 		$this->questionMapper = $questionMapper;
 		$this->submissionMapper = $submissionMapper;
 		$this->formsService = $formsService;
@@ -830,6 +837,140 @@ class ApiController extends OCSController {
 		}
 
 		$this->optionMapper->delete($option);
+
+		return new DataResponse($id);
+	}
+
+	/**
+	 * @NoAdminRequired
+	 * 
+	 * Add a new requrement to an option
+	 * 
+	 * @param int	$optionId Id of affected option
+	 * @param int	$conditionOptionId Id of option needet for condition
+	 * @param int	$condition Flaggable type of condition. Assume _populated_ as default.
+	 * @param bool	$isNot Negate condition. Default is `false`.
+	 * @return DataResponse
+	 * @throws OCSBadRequestException
+	 * @throws OCSForbiddenException
+	 */
+	public function newPrerequisite(int $optionId, int $conditionOptionId, int $condition = 1, bool $isNot = false): DataResponse {
+		$this->logger->debug('Adding new prerequisite: conditionOptionId: {conditionOptionId}, conditionOptionId: {conditionOptionId}, condition {condition}, isNot => {isNot}', [
+			'optionId' => $optionId,
+			'conditionOptionId' => $conditionOptionId,
+			'condition' => $condition,
+			'isNot' => $isNot,
+		]);
+
+		try {
+			$option = $this->optionMapper->findById($optionId);
+			$question = $this->questionMapper->findById($option->getQuestionId());
+			$form = $this->formMapper->findById($question->getFormId());
+		} catch (IMapperException $e) {
+			$this->logger->debug('Could not find form, question or option');
+			throw new OCSBadRequestException('Could not find form or question');
+		}
+
+		if ($form->getOwnerId() !== $this->currentUser->getUID()) {
+			$this->logger->debug('This form is not owned by the current user');
+			throw new OCSForbiddenException();
+		}
+
+		$prerequisite = new Prerequisite();
+
+		$prerequisite->setCondition($condition);
+		$prerequisite->setConditionOptionId($conditionOptionId);
+		$prerequisite->setOptionId($optionId);
+		$prerequisite->setIsNot($isNot);
+
+		$prerequisite = $this->prerequisiteMapper->insert($prerequisite);
+
+		return new DataResponse($prerequisite->read());
+	}
+
+	/**
+	 * @NoAdminRequired
+	 * 
+	 * Update a existing prerequisite
+	 * 
+	 * @param int 	$id Id of prerequisite to update
+	 * @param array	$keyValuePairs Array of key=>value pairs to update
+	 * @return DataResponse
+	 * @throws OCSBadRequestException
+	 * @throws OCSForbiddenException
+	 */
+	public function updatePrerequisite(int $id, array $keyValuePairs): DataResponse {
+		$this->logger->debug('Updating prerequisite: prerequisite: {id}, values: {keyValuePairs}', [
+			'id' => $id,
+			'keyValuePairs' => $keyValuePairs
+		]);
+
+		// Don't allow empty array
+		if (sizeof($keyValuePairs) === 0) {
+			$this->logger->info('Empty keyValuePairs, will not update.');
+			throw new OCSForbiddenException();
+		}
+
+		//Don't allow to change id
+		if (key_exists('id', $keyValuePairs)) {
+			$this->logger->debug('Not allowed to update id');
+			throw new OCSForbiddenException();
+		}
+
+		try {
+			$option = $this->optionMapper->findById($id);
+			$question = $this->questionMapper->findById($option->getQuestionId());
+			$form = $this->formMapper->findById($question->getFormId());
+		} catch (IMapperException $e) {
+			$this->logger->debug('Could not find option, question or form');
+			throw new OCSBadRequestException('Could not find option, question or form');
+		}
+
+		if ($form->getOwnerId() !== $this->currentUser->getUID()) {
+			$this->logger->debug('This form is not owned by the current user');
+			throw new OCSForbiddenException();
+		}
+
+		// Create OptionEntity with given Params and existing id
+		$prerequisite = Prerequisite::fromParams($keyValuePairs);
+		$prerequisite->setId($id);
+
+		// Update changed Columns in Db.
+		$this->prerequisiteMapper->update($option);
+
+		return new DataResponse($prerequisite->getId());
+	}
+
+	/**
+	 * @NoAdminRequired
+	 *
+	 * Delete a prerequisite
+	 *
+	 * @param int $id Id of prerequisite
+	 * @return DataResponse
+	 * @throws OCSBadRequestException
+	 * @throws OCSForbiddenException
+	 */
+	public function deletePrerequisite(int $id): DataResponse {
+		$this->logger->debug('Deleting prerequisite: {id}', [
+			'id' => $id
+		]);
+
+		try {
+			$option = $this->optionMapper->findById($id);
+			$question = $this->questionMapper->findById($option->getQuestionId());
+			$form = $this->formMapper->findById($question->getFormId());
+		} catch (IMapperException $e) {
+			$this->logger->debug('Could not find form, question or option');
+			throw new OCSBadRequestException('Could not find form or option');
+		}
+
+		if ($form->getOwnerId() !== $this->currentUser->getUID()) {
+			$this->logger->debug('This form is not owned by the current user');
+			throw new OCSForbiddenException();
+		}
+
+		$this->prerequisiteMapper->delete($option);
 
 		return new DataResponse($id);
 	}

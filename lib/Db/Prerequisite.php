@@ -32,17 +32,21 @@ use OCP\DB\Types;
 /**
  * Base type for conditional forms.
  *
- * @method string	getCondition()
+ * @method integer	getCondition()
+ * @method integer	setCondition()
  * @method integer	getConditionOptionId()
- * @method bool		getIsNot()
+ * @method integer	setConditionOptionId()
+ * @method boolean	getIsNot()
+ * @method boolean	setIsNot()
  * @method integer	getOptionId()
+ * @method integer	setOptionId()
  */
 class Prerequisite extends Entity {
 	
 	/**
 	 * Condition of prequisite.
 	 *
-	 * @var string
+	 * @var integer
 	 */
 	protected $condition;
 
