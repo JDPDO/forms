@@ -34,7 +34,7 @@ class PrerequisiteMapper extends QBMapper {
 	 * @param IDBConnection $db
 	 */
 	public function __construct(IDBConnection $db) {
-		parent::__construct($db, 'forms_v2_prerequistites', Prerequisite::class);
+		parent::__construct($db, 'forms_v2_prerequisites', Prerequisite::class);
 	}
 
 	/**
