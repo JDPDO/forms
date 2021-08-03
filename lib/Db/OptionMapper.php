@@ -34,16 +34,18 @@ use OCP\IDBConnection;
 
 class OptionMapper extends QBMapper {
 
+	/** @var PrerequisiteMapper */
 	private $prerequisiteMapper;
 
 	/**
 	 * OptionMapper constructor.
 	 * @param IDBConnection $db
+	 * @param PrerequisiteMapper $prerequisiteMapper
 	 */
 	public function __construct(IDBConnection $db, PrerequisiteMapper $prerequisiteMapper) {
 		parent::__construct($db, 'forms_v2_options', Option::class);
 
-		$this->$prerequisiteMapper = $prerequisiteMapper;
+		$this->prerequisiteMapper = $prerequisiteMapper;
 	}
 
 	/**
@@ -68,7 +70,9 @@ class OptionMapper extends QBMapper {
 		$qb = $this->db->getQueryBuilder();
 
 		// Delete Prerequisites
-		$this->prerequisiteMapper->deleteByOption();
+		foreach ($this->findByQuestion($questionId) as $option) {
+			$this->prerequisiteMapper->deleteByOption($option->getId());
+		}
 
 		$qb->delete($this->getTableName())
 			->where(
