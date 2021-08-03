@@ -13,7 +13,8 @@ trap onCancel EXIT
 NODE_ENV=development npm run dev
 # @see https://unix.stackexchange.com/questions/611675/run-a-command-in-parallel-and-wait-for-specific-output
 docker-compose up --build |
-    tee /dev/tty | {
+    tee /dev/tty | 
+    {
+        grep -q "apache2 -D FOREGROUND" && sleep 3 && echo "Enable forms app." && docker-compose exec -d -u www-data nextcloud php occ app:enable forms
         cat > /dev/null
-        grep -q "apache2 -D FOREGROUND" && docker-compose exec -u www-data nextcloud php occ app:enable forms
     }
