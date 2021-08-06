@@ -103,7 +103,7 @@
 					:max-string-lengths="maxStringLengths"
 					v-bind.sync="form.questions[index]"
 					@delete="deleteQuestion(question)"
-					@require="openPrerequisiteDialog(question)" />
+					@requirePrerequisite="openPrerequisiteDialog(question)" />
 			</Draggable>
 
 			<!-- Add new questions toolbar -->
@@ -129,8 +129,9 @@
 
 		<!-- Prerequisites selection dialog -->
 		<AppSettingsDialog :open.sync="prerequisiteDialogOpened">
-			<PrerequisteSelection>
-
+			<PrerequisteSelection
+				:questions="form.questions"
+				:requiringQuestion="lastRequiringQuestion">
 			</PrerequisteSelection>
 		</AppSettingsDialog>
 	</AppContent>
@@ -194,6 +195,9 @@ export default {
 			maxStringLengths: loadState('forms', 'maxStringLengths'),
 
 			prerequisiteDialogOpened: false,
+			// Current question requesting prerequisites
+			lastRequiringQuestion: Object,
+
 			questionMenuOpened: false,
 			answerTypes,
 
@@ -357,7 +361,8 @@ export default {
 		/*
 		 * Open dialog for prerequisite selection.
 		 */
-		openPrerequisiteDialog() {
+		openPrerequisiteDialog(question) {
+			this.lastRequiringQuestion = question
 			this.prerequisiteDialogOpened = true
 		},
 

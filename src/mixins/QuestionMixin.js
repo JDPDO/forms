@@ -193,8 +193,8 @@ export default {
 		/**
 		 * Option of other question is required
 		 */
-		 onRequirePrerequisite() {
-			this.$emit('require')
+		onRequirePrerequisite() {
+			this.$emit('requirePrerequisite')
 		},
 	},
 }
