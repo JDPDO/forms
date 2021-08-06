@@ -57,7 +57,7 @@
 					<!-- TRANSLATORS Making this question necessary to be answered when submitting to a form -->
 					{{ t('forms', 'Required') }}
 				</ActionCheckbox>
-				<ActionButton icon="icon-public" @click="onOpenPrerequisitesEditor">
+				<ActionButton icon="icon-public" @click="onRequirePrerequisite">
 					{{ t('forms', 'Prerequisites') }}
 				</ActionButton>
 				<ActionButton icon="icon-delete" @click="onDelete">
@@ -133,12 +133,6 @@ export default {
 		},
 	},
 
-	data() {
-		return {
-			prerequisites: [],
-		}
-	},
-
 	computed: {
 		/**
 		 * Extend text with asterisk if question is required
@@ -199,8 +193,8 @@ export default {
 		/**
 		 * Option of other question is required
 		 */
-		onOpenPrerequisitesEditor() {
-			this.$emit('requireOption')
+		onRequirePrerequisite() {
+			this.$emit('requirePrerequisite')
 		},
 	},
 }

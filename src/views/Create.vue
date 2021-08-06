@@ -4,6 +4,7 @@
   - @author René Gieling <github@dartcafe.de>
   - @author Nick Gallo
   - @author John Molakvoæ <skjnldsv@protonmail.com>
+  - @author Jan Petersen <dev.jdpdo@outlook.de>
   -
   - @license GNU AGPL version 3 or any later version
   -
@@ -101,7 +102,8 @@
 					:index="index + 1"
 					:max-string-lengths="maxStringLengths"
 					v-bind.sync="form.questions[index]"
-					@delete="deleteQuestion(question)" />
+					@delete="deleteQuestion(question)"
+					@require="openPrerequisiteDialog(question)" />
 			</Draggable>
 
 			<!-- Add new questions toolbar -->
@@ -123,6 +125,14 @@
 				</Actions>
 			</div>
 		</section>
+		<button @click="openPrerequisiteDialog">Show Settings</button>
+
+		<!-- Prerequisites selection dialog -->
+		<AppSettingsDialog :open.sync="prerequisiteDialogOpened">
+			<PrerequisteSelection>
+
+			</PrerequisteSelection>
+		</AppSettingsDialog>
 	</AppContent>
 </template>
 
@@ -137,9 +147,11 @@ import Draggable from 'vuedraggable'
 import ActionButton from '@nextcloud/vue/dist/Components/ActionButton'
 import Actions from '@nextcloud/vue/dist/Components/Actions'
 import AppContent from '@nextcloud/vue/dist/Components/AppContent'
+import AppSettingsDialog from '@nextcloud/vue/dist/Components/AppSettingsDialog'
 
 import answerTypes from '../models/AnswerTypes'
 import EmptyContent from '../components/EmptyContent'
+import PrerequisteSelection from '../components/PrerequisteSelection'
 import Question from '../components/Questions/Question'
 import QuestionLong from '../components/Questions/QuestionLong'
 import QuestionMultiple from '../components/Questions/QuestionMultiple'
@@ -157,8 +169,10 @@ export default {
 		ActionButton,
 		Actions,
 		AppContent,
+		AppSettingsDialog,
 		Draggable,
 		EmptyContent,
+		PrerequisteSelection,
 		Question,
 		QuestionLong,
 		QuestionShort,
@@ -179,6 +193,7 @@ export default {
 		return {
 			maxStringLengths: loadState('forms', 'maxStringLengths'),
 
+			prerequisiteDialogOpened: false,
 			questionMenuOpened: false,
 			answerTypes,
 
@@ -337,6 +352,13 @@ export default {
 			} finally {
 				this.isLoadingQuestions = false
 			}
+		},
+
+		/*
+		 * Open dialog for prerequisite selection.
+		 */
+		openPrerequisiteDialog() {
+			this.prerequisiteDialogOpened = true
 		},
 
 		/**

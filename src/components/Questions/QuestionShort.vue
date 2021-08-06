@@ -2,6 +2,7 @@
   - @copyright Copyright (c) 2020 John Molakvoæ <skjnldsv@protonmail.com>
   -
   - @author John Molakvoæ <skjnldsv@protonmail.com>
+  - @author Jan Petersen <dev.jdpdo@outlook.de>
   -
   - @license GNU AGPL version 3 or any later version
   -
@@ -32,7 +33,8 @@
 		:warning-invalid="answerType.warningInvalid"
 		@update:text="onTitleChange"
 		@update:isRequired="onRequiredChange"
-		@delete="onDelete">
+		@delete="onDelete"
+		@requirePrerequisite="onRequirePrerequisite">
 		<div class="question__content">
 			<input ref="input"
 				:aria-label="t('forms', 'A short answer for the question “{text}”', { text })"

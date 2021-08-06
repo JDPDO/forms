@@ -2,6 +2,7 @@
   - @copyright Copyright (c) 2020 John Molakvoæ <skjnldsv@protonmail.com>
   -
   - @author John Molakvoæ <skjnldsv@protonmail.com>
+  - @author Jan Petersen <dev.jdpdo@outlook.de>
   -
   - @license GNU AGPL version 3 or any later version
   -
@@ -34,7 +35,8 @@
 		:shift-drag-handle="shiftDragHandle"
 		@update:text="onTitleChange"
 		@update:isRequired="onRequiredChange"
-		@delete="onDelete">
+		@delete="onDelete"
+		@requirePrerequisite="onRequirePrerequisite">
 		<ul class="question__content">
 			<template v-for="(answer, index) in options">
 				<li v-if="!edit" :key="answer.id" class="question__item">

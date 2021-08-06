@@ -1,6 +1,7 @@
 /**
  * @copyright Copyright (c) 2020 John Molakvoæ <skjnldsv@protonmail.com>
  * @author John Molakvoæ <skjnldsv@protonmail.com>
+ * @author Jan Petersen <dev.jdpdo@outlook.de>
  * @license GNU AGPL version 3 or any later version
  *
  * This program is free software: you can redistribute it and/or modify
@@ -92,6 +93,14 @@ export default {
 			type: Object,
 			required: true,
 		},
+
+		/**
+		 * Prerequisites of this question
+		 */
+		prerequisites: {
+			type: Array,
+			default() { return [] },
+		},
 	},
 
 	components: {
@@ -179,6 +188,13 @@ export default {
 				showError(t('forms', 'Error while saving question'))
 				console.error(error)
 			}
+		},
+
+		/**
+		 * Option of other question is required
+		 */
+		 onRequirePrerequisite() {
+			this.$emit('require')
 		},
 	},
 }
