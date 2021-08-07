@@ -22,7 +22,7 @@
   -->
 
 <template>
-	<li v-if="!isShortened" v-click-outside="disableEdit"
+	<li v-if="!isShortened || ignoreShortening" v-click-outside="disableEdit"
 		:class="{ 'question--edit': edit }"
 		:aria-label="t('forms', 'Question number {index}', {index})"
 		class="question"
@@ -112,6 +112,10 @@ export default {
 			required: true,
 		},
 		isShortened: {
+			type: Boolean,
+			default() { return false },
+		},
+		ignoreShortening: {
 			type: Boolean,
 			default() { return false },
 		},
@@ -208,6 +212,7 @@ export default {
 		 * Option of other question is required
 		 */
 		onOpenPrerequisitesEditor() {
+			this.$props.ignoreShortening = true
 			this.$emit('require:prerequisites')
 		},
 	},
