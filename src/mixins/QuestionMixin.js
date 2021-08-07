@@ -51,6 +51,11 @@ export default {
 			required: true,
 		},
 
+		isShortened: {
+			type: Boolean,
+			default() { return false }
+		},
+
 		/**
 		 * The user answers
 		 */
@@ -140,6 +145,10 @@ export default {
 		 */
 		onDelete() {
 			this.$emit('delete')
+		},
+
+		onRequirePrerequisites() {
+			this.$emit('require:prerequisites')
 		},
 
 		/**

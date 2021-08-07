@@ -22,7 +22,7 @@
   -->
 
 <template>
-	<li v-click-outside="disableEdit"
+	<li v-if="!isShortened" v-click-outside="disableEdit"
 		:class="{ 'question--edit': edit }"
 		:aria-label="t('forms', 'Question number {index}', {index})"
 		class="question"
@@ -69,6 +69,7 @@
 		<!-- Question content -->
 		<slot />
 	</li>
+	<ListItem v-else :title="text" bold="true"></ListItem>
 </template>
 
 <script>
@@ -76,6 +77,8 @@ import { directive as ClickOutside } from 'v-click-outside'
 import Actions from '@nextcloud/vue/dist/Components/Actions'
 import ActionButton from '@nextcloud/vue/dist/Components/ActionButton'
 import ActionCheckbox from '@nextcloud/vue/dist/Components/ActionCheckbox'
+import ListItem from '@nextcloud/vue/dist/Components/ListItem'
+
 
 export default {
 	name: 'Question',
@@ -88,6 +91,7 @@ export default {
 		Actions,
 		ActionButton,
 		ActionCheckbox,
+		ListItem,
 	},
 
 	props: {
@@ -106,6 +110,10 @@ export default {
 		isRequired: {
 			type: Boolean,
 			required: true,
+		},
+		isShortened: {
+			type: Boolean,
+			default() { return false },
 		},
 		shiftDragHandle: {
 			type: Boolean,
@@ -200,7 +208,7 @@ export default {
 		 * Option of other question is required
 		 */
 		onOpenPrerequisitesEditor() {
-			this.$emit('requireOption')
+			this.$emit('require:prerequisites')
 		},
 	},
 }

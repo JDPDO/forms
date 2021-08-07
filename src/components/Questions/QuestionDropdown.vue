@@ -2,6 +2,7 @@
   - @copyright Copyright (c) 2020 John Molakvoæ <skjnldsv@protonmail.com>
   -
   - @author John Molakvoæ <skjnldsv@protonmail.com>
+  - @author Jan Petersen <dev.jdpdo@outlook.de>
   -
   - @license GNU AGPL version 3 or any later version
   -
@@ -34,14 +35,17 @@
 		:shift-drag-handle="shiftDragHandle"
 		@update:text="onTitleChange"
 		@update:isRequired="onRequiredChange"
-		@delete="onDelete">
+		@delete="onDelete"
+		:is-shortened.sync="isShortened"
+		@require:prerequisites="onRequirePrerequisites">
 		<select v-if="!edit"
 			:id="text"
 			:name="text"
 			:multiple="isMultiple"
 			:required="isRequired"
 			class="question__content"
-			@change="onChange">
+			@change="onChange"
+			>
 			<option value="">
 				{{ selectOptionPlaceholder }}
 			</option>

@@ -2,6 +2,7 @@
   - @copyright Copyright (c) 2020 John Molakvoæ <skjnldsv@protonmail.com>
   -
   - @author Simon Vieille <contact@deblan.fr>
+  - @author Jan Petersen <dev.jdpdo@outlook.de>
   -
   - @license GNU AGPL version 3 or any later version
   -
@@ -32,7 +33,9 @@
 		:warning-invalid="answerType.warningInvalid"
 		@update:text="onTitleChange"
 		@update:isRequired="onRequiredChange"
-		@delete="onDelete">
+		@delete="onDelete"
+		:is-shortened.sync="isShortened"
+		@require:prerequisites="onRequirePrerequisites">
 		<div class="question__content">
 			<DatetimePicker
 				v-model="time"

@@ -100,8 +100,10 @@
 					:answer-type="answerTypes[question.type]"
 					:index="index + 1"
 					:max-string-lengths="maxStringLengths"
+					:is-shortened.sync="isPickingPrerequisite"
 					v-bind.sync="form.questions[index]"
-					@delete="deleteQuestion(question)" />
+					@delete="deleteQuestion(question)"
+					@require:prerequisites="onRequirePrerequisites(question)" />
 			</Draggable>
 
 			<!-- Add new questions toolbar -->
@@ -185,6 +187,7 @@ export default {
 			// Various states
 			isLoadingQuestions: false,
 			isDragging: false,
+			isPickingPrerequisite: false,
 		}
 	},
 
@@ -337,6 +340,11 @@ export default {
 			} finally {
 				this.isLoadingQuestions = false
 			}
+		},
+
+		onRequirePrerequisites(question) {
+			this.isPickingPrerequisite = true
+			this.$emit('picking')
 		},
 
 		/**
