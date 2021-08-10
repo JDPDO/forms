@@ -2,6 +2,7 @@
   - @copyright Copyright (c) 2020 John Molakvoæ <skjnldsv@protonmail.com>
   -
   - @author John Molakvoæ <skjnldsv@protonmail.com>
+  - @author Jan Petersen <dev.jdpdo@outlook.de>
   -
   - @license GNU AGPL version 3 or any later version
   -
@@ -68,6 +69,8 @@
 					:is-unique="isUnique"
 					:is-dropdown="false"
 					:max-option-length="maxStringLengths.optionText"
+					:question="component"
+					:questions="questions"
 					@add="addNewEntry"
 					@delete="deleteOption"
 					@update:answer="updateAnswer" />
@@ -109,6 +112,13 @@ export default {
 	},
 
 	mixins: [QuestionMixin],
+
+	props: {
+		questions: {
+			type: Array,
+			default() { return [] },
+		},
+	},
 
 	computed: {
 		contentValid() {

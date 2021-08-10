@@ -1,5 +1,27 @@
+<!--
+  - @copyright Copyright (c) 2020 John Molakvoæ <skjnldsv@protonmail.com>
+  -
+  - @author John Molakvoæ <skjnldsv@protonmail.com>
+  - @author Jan Petersen <dev.jdpdo@outlook.de>
+  -
+  - @license GNU AGPL version 3 or any later version
+  -
+  - This program is free software: you can redistribute it and/or modify
+  - it under the terms of the GNU Affero General Public License as
+  - published by the Free Software Foundation, either version 3 of the
+  - License, or (at your option) any later version.
+  -
+  - This program is distributed in the hope that it will be useful,
+  - but WITHOUT ANY WARRANTY; without even the implied warranty of
+  - MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+  - GNU Affero General Public License for more details.
+  -
+  - You should have received a copy of the GNU Affero General Public License
+  - along with this program. If not, see <http://www.gnu.org/licenses/>.
+  -
+  -->
 <template>
-	<li class="question__item">
+	<li>
 		<div class="question__item__pseudoInput"
 			:class="{
 				'question__item__pseudoInput--unique':isUnique,
@@ -17,6 +39,18 @@
 			@input="onInput"
 			@keydown.delete="deleteEntry"
 			@keydown.enter.prevent="addNewEntry">
+
+		<div>
+			<Multiselect
+				v-if="questions.length > 1"
+				style="width:100%"
+				:multiple="true"
+				:options="selectionOptions"
+				label="text"
+				:placeholder="t('forms', 'Prerequisite for...')"
+				track-by="id"
+				v-model="dependent" />
+		</div>
 
 		<!-- Delete answer -->
 		<Actions>
@@ -36,6 +70,7 @@ import PQueue from 'p-queue'
 
 import Actions from '@nextcloud/vue/dist/Components/Actions'
 import ActionButton from '@nextcloud/vue/dist/Components/ActionButton'
+import Multiselect from '@nextcloud/vue/dist/Components/Multiselect'
 
 import OcsResponse2Data from '../../utils/OcsResponse2Data'
 
@@ -45,6 +80,7 @@ export default {
 	components: {
 		Actions,
 		ActionButton,
+		Multiselect,
 	},
 
 	props: {
@@ -68,17 +104,41 @@ export default {
 			type: Number,
 			required: true,
 		},
+		question: {
+			type: Object,
+			required: true,
+		},
+		questions: {
+			type: Array,
+			default() { return [] },
+		},
 	},
 
 	data() {
 		return {
 			queue: new PQueue({ concurrency: 1 }),
 
+			dependent: null,
+
 			// As data instead of Method, to have a separate debounce per AnswerInput
 			debounceUpdateAnswer: pDebounce(function(answer) {
 				return this.queue.add(() => this.updateAnswer(answer))
 			}, 500),
 		}
+	},
+
+	computed: {
+		selectionOptions() {
+			return this.questions.map(question => {
+				if (question.id !== this.id) {
+					if (question.text === '') {
+						question.text = '#' + question.id
+					}
+					return question
+				}
+				return null
+			}, this.question)
+		},
 	},
 
 	methods: {
@@ -228,7 +288,7 @@ export default {
 
 // Using type to have a higher order than the input styling of server
 .question__input[type=text] {
-	width: 100%;
+	width: 60%;
 	// Height 34px + 1px Border
 	min-height: 35px;
 	margin: 0;

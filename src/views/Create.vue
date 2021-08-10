@@ -4,6 +4,7 @@
   - @author René Gieling <github@dartcafe.de>
   - @author Nick Gallo
   - @author John Molakvoæ <skjnldsv@protonmail.com>
+  - @author Jan Petersen <dev.jdpdo@outlook.de>
   -
   - @license GNU AGPL version 3 or any later version
   -
@@ -100,6 +101,7 @@
 					:answer-type="answerTypes[question.type]"
 					:index="index + 1"
 					:max-string-lengths="maxStringLengths"
+					:questions="form.questions"
 					v-bind.sync="form.questions[index]"
 					@delete="deleteQuestion(question)" />
 			</Draggable>
