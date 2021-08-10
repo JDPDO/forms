@@ -104,8 +104,8 @@ export default {
 			type: Number,
 			required: true,
 		},
-		question: {
-			type: Object,
+		questionId: {
+			type: Number,
 			required: true,
 		},
 		questions: {
@@ -128,16 +128,19 @@ export default {
 	},
 
 	computed: {
+		/**
+		 * Prepared options for prerequistie multiselection.
+		 */
 		selectionOptions() {
-			return this.questions.map(question => {
-				if (question.id !== this.id) {
-					if (question.text === '') {
-						question.text = '#' + question.id
-					}
-					return question
+			const options = this.questions.map(question => {
+				if (question.text === '') {
+					question.text = '#' + question.id
 				}
-				return null
-			}, this.question)
+				return question
+			})
+			const ownQuestion = options.indexOf(this.questions.find(({ id }) => id === this.questionId))
+			options.splice(ownQuestion, 1)
+			return options
 		},
 	},
 

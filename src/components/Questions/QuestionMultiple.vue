@@ -69,7 +69,7 @@
 					:is-unique="isUnique"
 					:is-dropdown="false"
 					:max-option-length="maxStringLengths.optionText"
-					:question="component"
+					:question-id="id"
 					:questions="questions"
 					@add="addNewEntry"
 					@delete="deleteOption"
