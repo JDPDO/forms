@@ -35,7 +35,8 @@
 		@update:isRequired="onRequiredChange"
 		@delete="onDelete"
 		:is-shortened.sync="isShortened"
-		@require:prerequisites="onRequirePrerequisites">
+		@require:prerequisites="onRequirePrerequisites"
+		@select="onSelect">
 		<div class="question__content">
 			<input ref="input"
 				:aria-label="t('forms', 'A short answer for the question “{text}”', { text })"

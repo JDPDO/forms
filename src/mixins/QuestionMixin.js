@@ -74,6 +74,11 @@ export default {
 			required: true,
 		},
 
+		prerequisites: {
+			type: Array,
+			default() { return [] },
+		},
+
 		/**
 		 * Answer type model object
 		 */
@@ -149,6 +154,10 @@ export default {
 
 		onRequirePrerequisites() {
 			this.$emit('require:prerequisites')
+		},
+
+		onSelect() {
+			this.$emit('select')
 		},
 
 		/**

@@ -22,7 +22,8 @@
   -->
 
 <template>
-	<li v-if="!isShortened || ignoreShortening" v-click-outside="disableEdit"
+	<li v-if="!isShortened || ignoreShortening"
+		v-click-outside="disableEdit"
 		:class="{ 'question--edit': edit }"
 		:aria-label="t('forms', 'Question number {index}', {index})"
 		class="question"
@@ -69,7 +70,10 @@
 		<!-- Question content -->
 		<slot />
 	</li>
-	<ListItem v-else :title="text" bold="true"></ListItem>
+	<ListItem v-else
+		:title="text"
+		bold="true"
+		@click="onListItemSelected" />
 </template>
 
 <script>
@@ -78,7 +82,6 @@ import Actions from '@nextcloud/vue/dist/Components/Actions'
 import ActionButton from '@nextcloud/vue/dist/Components/ActionButton'
 import ActionCheckbox from '@nextcloud/vue/dist/Components/ActionCheckbox'
 import ListItem from '@nextcloud/vue/dist/Components/ListItem'
-
 
 export default {
 	name: 'Question',
@@ -113,15 +116,19 @@ export default {
 		},
 		isShortened: {
 			type: Boolean,
-			default() { return false },
+			default: false,
 		},
 		ignoreShortening: {
 			type: Boolean,
-			default() { return false },
+			default: false,
 		},
 		shiftDragHandle: {
 			type: Boolean,
 			default: false,
+		},
+		prerequisites: {
+			type: Array,
+			default() { return [] },
 		},
 		edit: {
 			type: Boolean,
@@ -143,12 +150,6 @@ export default {
 			type: String,
 			default: t('forms', 'This question needs a title!'),
 		},
-	},
-
-	data() {
-		return {
-			prerequisites: [],
-		}
 	},
 
 	computed: {
@@ -206,6 +207,10 @@ export default {
 		 */
 		onDelete() {
 			this.$emit('delete')
+		},
+
+		onListItemSelect() {
+			this.$emit('select')
 		},
 
 		/**

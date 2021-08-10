@@ -103,7 +103,8 @@
 					:is-shortened.sync="isPickingPrerequisite"
 					v-bind.sync="form.questions[index]"
 					@delete="deleteQuestion(question)"
-					@require:prerequisites="onRequirePrerequisites" />
+					@require:prerequisites="onRequirePrerequisites(question)"
+					@select="onQuestionSelect(question)" />
 			</Draggable>
 
 			<!-- Add new questions toolbar -->
@@ -188,6 +189,7 @@ export default {
 			isLoadingQuestions: false,
 			isDragging: false,
 			isPickingPrerequisite: false,
+			currentQuestion: Object,
 		}
 	},
 
@@ -342,9 +344,21 @@ export default {
 			}
 		},
 
-		onRequirePrerequisites() {
-			this.isPickingPrerequisite = true
-			this.$emit('select:prerequisites')
+		onRequirePrerequisites(beginSelection, question) {
+			if (beginSelection) {
+				this.currentQuestion = question
+				this.isPickingPrerequisite = true
+				this.$emit('select:prerequisites')
+			} else {
+				this.isPickingPrerequisite = false
+				this.$emit('end:select:prerequisites')
+			}
+		},
+
+		onQuestionSelect(question) {
+			if (this.isPickingPrerequisite) {
+				this.currentQuestion.props.addPrerequisite()
+			}
 		},
 
 		/**
