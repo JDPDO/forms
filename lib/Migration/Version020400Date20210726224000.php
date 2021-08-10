@@ -57,7 +57,7 @@ class Version020400Date20210726224000 extends SimpleMigrationStep {
                 'notnull' => true,
             ]);
             $table->addColumn('is_not', Types::BOOLEAN, [
-                'notnull' => true,
+                'notnull' => false,
             ]);
             $table->addColumn('option_id', Types::INTEGER, [
                 'notnull' => true,
