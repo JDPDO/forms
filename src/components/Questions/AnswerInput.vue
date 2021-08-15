@@ -49,7 +49,8 @@
 				label="text"
 				:placeholder="t('forms', 'Prerequisite for...')"
 				track-by="id"
-				v-model="dependent" />
+				v-model="dependentQuestions"
+				@update:value="updatePrerequisites" />
 		</div>
 
 		<!-- Delete answer -->
@@ -118,7 +119,9 @@ export default {
 		return {
 			queue: new PQueue({ concurrency: 1 }),
 
-			dependent: null,
+			dependentQuestions: [],
+			// Saves last status for efficient server saving.
+			lastDependentQuestions: [],
 
 			// As data instead of Method, to have a separate debounce per AnswerInput
 			debounceUpdateAnswer: pDebounce(function(answer) {
@@ -230,7 +233,7 @@ export default {
 		}, 100),
 
 		/**
-		 * Save to the server, only do it after 500ms
+		 * Save answer to the server, only do it after 500ms
 		 * of no change
 		 *
 		 * @param {object} answer the answer to sync
@@ -248,6 +251,54 @@ export default {
 				showError(t('forms', 'Error while saving the answer'))
 				console.error(error)
 			}
+		},
+
+		/**
+		 * Save answers prerequisites to server.
+		 * Decide here if creation or deletion is required.
+		 */
+		updatePrerequisites() {
+			console.debug('update prerequisites')
+			const createdDependencies
+				= this.dependentQuestions.filter(x => !this.lastDependentQuestions.includes(x))
+			const deletedDependencies
+				= this.lastDependentQuestions.filter(x => !this.dependentQuestions.includes(x))
+
+			if (createdDependencies.length > 0) {
+				createdDependencies.forEach(x => {
+					this.createPrerequisite(x)
+				}, this)
+			}
+
+			if (deletedDependencies.length > 0) {
+				deletedDependencies.forEach(x => {
+					this.deletePrerequisite(x)
+				})
+			}
+			this.lastDependentQuestions = [...this.dependentQuestions]
+		},
+
+		async createPrerequisite(dependentQuestion) {
+			const prerequisite = {
+				conditionOptionId: this.answer.id,
+				optionId: dependentQuestion, // Should be renamed if working.
+			}
+			try {
+				const response = await axios.post(generateOcsUrl('apps/forms/api/v1.1/prerequisite'), prerequisite)
+				console.debug('Created Prerequisite', prerequisite)
+
+				// Merge additional default attributes.
+				return Object.assign({}, prerequisite, OcsResponse2Data(response))
+			} catch (error) {
+				showError(t('forms', 'Error while saving the prerequisite'))
+				console.error(error)
+			}
+		},
+
+		deletePrerequisite(dependentQuestion) {
+			console.debug('Delete Prerequisite', dependentQuestion)
+			throw 'Not implemented yet!';
+			// axios.delete(generateOcsUrl('apps/forms/api/v1.1/prerequisite/{id}', { id: prerequisite.id }))
 		},
 	},
 }
