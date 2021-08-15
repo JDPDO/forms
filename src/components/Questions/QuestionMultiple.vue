@@ -62,7 +62,7 @@
 
 				<!-- Answer text input edit -->
 				<AnswerInput v-show="edit"
-					:key="index /* using index to keep the same vnode after new answer creation */"
+					:key="answer.id"
 					ref="input"
 					:answer="answer"
 					:index="index"
