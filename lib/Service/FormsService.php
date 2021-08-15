@@ -28,6 +28,7 @@ use OCA\Forms\Activity\ActivityManager;
 use OCA\Forms\Db\Form;
 use OCA\Forms\Db\FormMapper;
 use OCA\Forms\Db\OptionMapper;
+use OCA\Forms\Db\PrerequisiteMapper;
 use OCA\Forms\Db\QuestionMapper;
 use OCA\Forms\Db\SubmissionMapper;
 use OCP\AppFramework\Db\DoesNotExistException;
@@ -54,6 +55,9 @@ class FormsService {
 	/** @var OptionMapper */
 	private $optionMapper;
 
+	/** @var PrerequisiteMapper */
+	private $prerequisiteMapper;
+
 	/** @var QuestionMapper */
 	private $questionMapper;
 
@@ -75,6 +79,7 @@ class FormsService {
 	public function __construct(ActivityManager $activityManager,
 								FormMapper $formMapper,
 								OptionMapper $optionMapper,
+								PrerequisiteMapper $prerequisiteMapper,
 								QuestionMapper $questionMapper,
 								SubmissionMapper $submissionMapper,
 								IGroupManager $groupManager,
@@ -84,6 +89,7 @@ class FormsService {
 		$this->activityManager = $activityManager;
 		$this->formMapper = $formMapper;
 		$this->optionMapper = $optionMapper;
+		$this->prerequisiteMapper = $prerequisiteMapper;
 		$this->questionMapper = $questionMapper;
 		$this->submissionMapper = $submissionMapper;
 		$this->groupManager = $groupManager;
@@ -113,6 +119,21 @@ class FormsService {
 		}
 	}
 
+	public function getPrerequisites(int $questionId): array {
+		$prerequisteList = [];
+		try {
+			// TODO: Rename persistent optionId to questionId
+			$prerequisiteEntities = $this->prerequisiteMapper->findByOption($questionId);
+			foreach ($prerequisiteEntities as $prerequisiteEntity) {
+				$prerequisteList[] = $prerequisiteEntity->read();
+			}
+		} catch (DoesNotExistException $e) {
+			// Do nothing
+		} finally {
+			return $prerequisteList;
+		}
+	}
+
 	/**
 	 * Load questions corresponding to form
 	 *
@@ -125,7 +146,9 @@ class FormsService {
 			$questionEntities = $this->questionMapper->findByForm($formId);
 			foreach ($questionEntities as $questionEntity) {
 				$question = $questionEntity->read();
-				$question['options'] = $this->getOptions($question['id']);
+				$questionId = $question['id'];
+				$question['options'] = $this->getOptions($questionId);
+				$question['prerequisites'] = $this->getPrerequisites($questionId);
 				$questionList[] = $question;
 			}
 		} catch (DoesNotExistException $e) {

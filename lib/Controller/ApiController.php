@@ -203,7 +203,7 @@ class ApiController extends OCSController {
 	/**
 	 * @NoAdminRequired
 	 *
-	 * Read all information to edit a Form (form, questions, options, except submissions/answers).
+	 * Read all information to edit a Form (form, questions, options, prerequisites, except submissions/answers).
 	 *
 	 * @return DataResponse
 	 * @throws OCSBadRequestException
