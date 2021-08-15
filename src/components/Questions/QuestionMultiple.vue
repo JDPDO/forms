@@ -38,7 +38,7 @@
 		@delete="onDelete">
 		<ul class="question__content">
 			<template v-for="(answer, index) in options">
-				<li v-if="!edit" :key="answer.id" class="question__item">
+				<li v-show="!edit" :key="answer.id" class="question__item">
 					<!-- Answer radio/checkbox + label -->
 					<!-- TODO: migrate to radio/checkbox component once available -->
 					<input :id="`${id}-answer-${answer.id}`"
@@ -61,7 +61,7 @@
 				</li>
 
 				<!-- Answer text input edit -->
-				<AnswerInput v-else
+				<AnswerInput v-show="edit"
 					:key="index /* using index to keep the same vnode after new answer creation */"
 					ref="input"
 					:answer="answer"
