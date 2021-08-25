@@ -84,14 +84,9 @@
 </template>
 
 <script>
-import { generateOcsUrl } from '@nextcloud/router'
-import { showError } from '@nextcloud/dialogs'
-import axios from '@nextcloud/axios'
-
 import AnswerInput from './AnswerInput'
 import QuestionMixin from '../../mixins/QuestionMixin'
 import QuestionWithOptionsMixin from '../../mixins/QuestionWithOptionsMixin'
-import GenRandomId from '../../utils/GenRandomId'
 
 export default {
 	name: 'QuestionDropdown',
@@ -119,24 +114,6 @@ export default {
 		},
 	},
 
-	watch: {
-		edit(edit) {
-			// When leaving edit mode, filter and delete empty options
-			if (!edit) {
-				const options = this.options.filter(option => {
-					if (!option.text) {
-						this.deleteOptionFromDatabase(option)
-						return false
-					}
-					return true
-				})
-
-				// update parent
-				this.updateOptions(options)
-			}
-		},
-	},
-
 	methods: {
 		onChange(event) {
 			// Get all selected options
@@ -152,142 +129,6 @@ export default {
 
 			// Emit values and remove duplicates
 			this.$emit('update:values', [...new Set(answerIds)])
-		},
-
-		/**
-		 * Is the provided answer checked ?
-		 *
-		 * @param {number} id the answer id
-		 * @return {boolean}
-		 */
-		isChecked(id) {
-			return this.values.indexOf(id) > -1
-		},
-
-		/**
-		 * Update the options
-		 *
-		 * @param {Array} options options to change
-		 */
-		updateOptions(options) {
-			this.$emit('update:options', options)
-		},
-
-		/**
-		 * Update an existing answer locally
-		 *
-		 * @param {string|number} id the answer id
-		 * @param {object} answer the answer to update
-		 */
-		updateAnswer(id, answer) {
-			const options = this.options.slice()
-			const answerIndex = options.findIndex(option => option.id === id)
-			options[answerIndex] = answer
-
-			this.updateOptions(options)
-		},
-
-		/**
-		 * Add a new empty answer locally
-		 */
-		addNewEntry() {
-			// If entering from non-edit-mode (possible by click), activate edit-mode
-			this.edit = true
-
-			// Add local entry
-			const options = this.options.slice()
-			options.push({
-				id: GenRandomId(),
-				questionId: this.id,
-				text: '',
-				local: true,
-			})
-
-			// Update question
-			this.updateOptions(options)
-
-			this.$nextTick(() => {
-				this.focusIndex(options.length - 1)
-			})
-		},
-
-		/**
-		 * Restore an option locally
-		 *
-		 * @param {object} option the option
-		 * @param {number} index the options index in this.options
-		 */
-		restoreOption(option, index) {
-			const options = this.options.slice()
-			options.splice(index, 0, option)
-
-			this.updateOptions(options)
-			this.focusIndex(index)
-		},
-
-		/**
-		 * Delete an option
-		 *
-		 * @param {number} id the options id
-		 */
-		deleteOption(id) {
-			const options = this.options.slice()
-			const optionIndex = options.findIndex(option => option.id === id)
-
-			if (options.length === 1) {
-				// Clear Text, but don't remove. Will be removed, when leaving edit-mode
-				options[0].text = ''
-			} else {
-				// Remove entry
-				const option = Object.assign({}, this.options[optionIndex])
-
-				// delete locally
-				options.splice(optionIndex, 1)
-
-				// delete from Db
-				this.deleteOptionFromDatabase(option)
-			}
-
-			// Update question
-			this.updateOptions(options)
-
-			this.$nextTick(() => {
-				this.focusIndex(optionIndex - 1)
-			})
-		},
-
-		/**
-		 * Delete the option from Db in background.
-		 * Restore option if delete not possible
-		 *
-		 * @param {object} option The option to delete
-		 */
-		deleteOptionFromDatabase(option) {
-			const optionIndex = this.options.findIndex(opt => opt.id === option.id)
-
-			if (!option.local) {
-				// let's not await, deleting in background
-				axios.delete(generateOcsUrl('apps/forms/api/v1.1/option/{id}', { id: option.id }))
-					.catch(error => {
-						showError(t('forms', 'There was an issue deleting this option'))
-						console.error(error)
-						// restore option
-						this.restoreOption(option, optionIndex)
-					})
-			}
-		},
-
-		/**
-		 * Focus the input matching the index
-		 *
-		 * @param {number} index the value index
-		 */
-		focusIndex(index) {
-			const inputs = this.$refs.input
-			if (inputs && inputs[index]) {
-				const input = inputs[index]
-				input.focus()
-			}
 		},
 	},
 }
