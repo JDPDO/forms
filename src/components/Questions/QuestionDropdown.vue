@@ -2,6 +2,7 @@
   - @copyright Copyright (c) 2020 John Molakvoæ <skjnldsv@protonmail.com>
   -
   - @author John Molakvoæ <skjnldsv@protonmail.com>
+  - @author Jan Petersen <dev.jdpdo@outlook.de>
   -
   - @license GNU AGPL version 3 or any later version
   -
@@ -89,6 +90,7 @@ import axios from '@nextcloud/axios'
 
 import AnswerInput from './AnswerInput'
 import QuestionMixin from '../../mixins/QuestionMixin'
+import QuestionWithOptionsMixin from '../../mixins/QuestionWithOptionsMixin'
 import GenRandomId from '../../utils/GenRandomId'
 
 export default {
@@ -98,7 +100,10 @@ export default {
 		AnswerInput,
 	},
 
-	mixins: [QuestionMixin],
+	mixins: [
+		QuestionMixin,
+		QuestionWithOptionsMixin,
+	],
 
 	computed: {
 		selectOptionPlaceholder() {
@@ -108,30 +113,9 @@ export default {
 			return this.answerType.createPlaceholder
 		},
 
-		contentValid() {
-			return this.answerType.validate(this)
-		},
-
-		isLastEmpty() {
-			const value = this.options[this.options.length - 1]
-			return value?.text?.trim().length === 0
-		},
-
 		isMultiple() {
 			// This can be extended if we want to include support for <select multiple>
 			return false
-		},
-
-		hasNoAnswer() {
-			return this.options.length === 0
-		},
-
-		areNoneChecked() {
-			return this.values.length === 0
-		},
-
-		shiftDragHandle() {
-			return this.edit && this.options.length !== 0 && !this.isLastEmpty
 		},
 	},
 
