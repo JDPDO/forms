@@ -96,6 +96,7 @@ import axios from '@nextcloud/axios'
 
 import AnswerInput from './AnswerInput'
 import QuestionMixin from '../../mixins/QuestionMixin'
+import QuestionWithOptionsMixin from '../../mixins/QuestionWithOptionsMixin'
 import GenRandomId from '../../utils/GenRandomId'
 
 // Implementations docs
@@ -108,32 +109,14 @@ export default {
 		AnswerInput,
 	},
 
-	mixins: [QuestionMixin],
+	mixins: [
+		QuestionMixin,
+		QuestionWithOptionsMixin,
+	],
 
 	computed: {
-		contentValid() {
-			return this.answerType.validate(this)
-		},
-
-		isLastEmpty() {
-			const value = this.options[this.options.length - 1]
-			return value?.text?.trim().length === 0
-		},
-
 		isUnique() {
 			return this.answerType.unique === true
-		},
-
-		hasNoAnswer() {
-			return this.options.length === 0
-		},
-
-		areNoneChecked() {
-			return this.values.length === 0
-		},
-
-		shiftDragHandle() {
-			return this.edit && this.options.length !== 0 && !this.isLastEmpty
 		},
 	},
 
