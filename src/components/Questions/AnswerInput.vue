@@ -21,7 +21,7 @@
   -
   -->
 <template>
-	<li>
+	<li class="question__item">
 		<div class="question__item__pseudoInput"
 			:class="{
 				'question__item__pseudoInput--unique':isUnique,
