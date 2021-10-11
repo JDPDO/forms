@@ -68,7 +68,7 @@ export default {
 		 * @author John Molakvoæ <skjnldsv@protonmail.com>
 		 *
 		 */
-		 hasNoAnswer() {
+		hasNoAnswer() {
 			return this.options.length === 0
 		},
 
@@ -148,7 +148,7 @@ export default {
 		 *
 		 * @param {number} id the options id
 		 */
-		 deleteOption(id) {
+		deleteOption(id) {
 			const options = this.options.slice()
 			const optionIndex = options.findIndex(option => option.id === id)
 
@@ -204,7 +204,7 @@ export default {
 		 *
 		 * @param {number} index the value index
 		 */
-		 focusIndex(index) {
+		focusIndex(index) {
 			const inputs = this.$refs.input
 			if (inputs && inputs[index]) {
 				const input = inputs[index]
